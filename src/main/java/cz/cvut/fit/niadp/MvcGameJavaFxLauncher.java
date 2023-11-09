@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 import cz.cvut.fit.niadp.mvcgame.MvcGame;
+import cz.cvut.fit.niadp.mvcgame.view.NullableObject.JavaFXGraphicsContext;
 
 public class MvcGameJavaFxLauncher extends Application {
 
@@ -49,7 +50,7 @@ public class MvcGameJavaFxLauncher extends Application {
                 }
         );
         // the game-loop
-        theMvcGame.setGraphicsContext(gc);
+        theMvcGame.setGraphicsContext(new JavaFXGraphicsContext(gc));
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 theMvcGame.processPressedKeys(pressedKeysCodes);
