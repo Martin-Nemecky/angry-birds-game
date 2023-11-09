@@ -7,7 +7,7 @@ import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
 import cz.cvut.fit.niadp.mvcgame.model.GameModel;
 import cz.cvut.fit.niadp.mvcgame.view.GameView;
-import javafx.scene.canvas.GraphicsContext;
+import cz.cvut.fit.niadp.mvcgame.view.NullableObject.IGraphicsContext;
 
 public class MvcGame {
 
@@ -38,7 +38,7 @@ public class MvcGame {
         return  MvcGameConfig.MAX_Y;
     }
 
-    public void setGraphicsContext(GraphicsContext gr) {
+    public void setGraphicsContext(IGraphicsContext gr) {
         this.view.setGraphicsContext(gr);
     }
 }

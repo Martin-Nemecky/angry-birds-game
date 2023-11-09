@@ -8,6 +8,6 @@ public class GameViewTest {
     @Test
     public void renderNullObjectTest(){
         GameView view = new GameView(new GameModel());
-        view.update();
+        view.update("");
     }
 }
