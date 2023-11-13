@@ -64,6 +64,26 @@ public class GameModel implements IObservable {
         this.notifyObservers();
     }
 
+    public void aimCannonUp() {
+        this.cannon.aimUp();
+        this.notifyObservers();
+    }
+
+    public void aimCannonDown() {
+        this.cannon.aimDown();
+        this.notifyObservers();
+    }
+
+    public void cannonPowerUp() {
+        this.cannon.powerUp();
+        this.notifyObservers();
+    }
+
+    public void cannonPowerDown() {
+        this.cannon.powerDown();
+        this.notifyObservers();
+    }
+
     @Override
     public void registerObserver(IObserver observer) {
         this.observers.add(observer);
