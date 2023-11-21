@@ -8,6 +8,7 @@ import cz.cvut.fit.niadp.mvcgame.view.NullableObject.NullGraphicsContext;
 import javafx.scene.image.Image;
 
 public class GameObjectsRender implements IGameObjectsVisitor {
+    
     private IGraphicsContext gr = NullGraphicsContext.getInstance();
 
     public void setGraphicsContext(IGraphicsContext gr) {

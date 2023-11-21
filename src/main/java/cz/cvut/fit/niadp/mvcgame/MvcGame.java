@@ -6,6 +6,7 @@ import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 // in the future, use Bridge to remove this dependency
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
 import cz.cvut.fit.niadp.mvcgame.model.GameModel;
+import cz.cvut.fit.niadp.mvcgame.sound.SoundObserver;
 import cz.cvut.fit.niadp.mvcgame.view.GameView;
 import cz.cvut.fit.niadp.mvcgame.view.NullableObject.IGraphicsContext;
 
@@ -15,11 +16,13 @@ public class MvcGame {
     private GameModel model;
     private GameView view;
     private GameController controller;
-
+    
     public void init() {
         this.model = new GameModel();
         this.view = new GameView(model);
         this.controller = this.view.getController();
+
+        new SoundObserver(model);
     }
 
     public void processPressedKeys(List<String> pressedKeysCodes) {

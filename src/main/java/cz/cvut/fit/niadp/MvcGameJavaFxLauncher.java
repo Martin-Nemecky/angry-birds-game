@@ -24,6 +24,8 @@ public class MvcGameJavaFxLauncher extends Application {
 
     @Override
     public void start(Stage stage) {
+        
+
         String winTitle = theMvcGame.getWindowTitle();
         int winWidth = theMvcGame.getWindowWidth();
         int winHeigth = theMvcGame.getWindowHeight();
