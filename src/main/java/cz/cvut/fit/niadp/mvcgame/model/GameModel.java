@@ -11,6 +11,9 @@ import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.IAspect;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.SimpleAspect;
+import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.RealisticMovingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.SimpleMovingStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +29,7 @@ public class GameModel implements IObservable {
     private final Map<AspectType, Set<IObserver>> observers;
     private IGameObjectsFactory gameObjectsFactory;
     private final List<AbsMissile> missiles;
+    private IMovingStrategy movingStrategy;
 
     public GameModel() {
         this.observers = new HashMap<>();
@@ -36,6 +40,7 @@ public class GameModel implements IObservable {
         this.gameObjectsFactory.setModel(this);
         this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
+        this.movingStrategy = new SimpleMovingStrategy();
     }
 
     public void update() {
@@ -43,7 +48,7 @@ public class GameModel implements IObservable {
     }
 
     private void moveMissiles() {
-        this.missiles.forEach(missile -> missile.move(new Vector(MvcGameConfig.MOVE_STEP, 0)));
+        this.missiles.forEach(AbsMissile::move);
         this.destroyMissiles();
         this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
     }
@@ -69,17 +74,36 @@ public class GameModel implements IObservable {
     }
 
     public void cannonShoot() {
-        AbsMissile m = this.cannon.shoot();
-        this.missiles.add(m);
-        this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED, m));
+        List<AbsMissile> missiles = this.cannon.shoot();
+        this.missiles.addAll(missiles);
+        this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED, missiles.get(0)));
     }
-        
-
+    
     @Override
     public void registerObserver(IObserver observer, AspectType aspects[]) {
         for(AspectType aspect : aspects){
             this.observers.get(aspect).add(observer);
-        }        
+        }    
+    }
+
+    public void aimCannonUp() {
+        this.cannon.aimUp();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    public void aimCannonDown() {
+        this.cannon.aimDown();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    public void cannonPowerUp() {
+        this.cannon.powerUp();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    public void cannonPowerDown() {
+        this.cannon.powerDown();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
     }
 
     @Override
@@ -102,5 +126,45 @@ public class GameModel implements IObservable {
 
     public List<GameObject> getGameObjects() {
         return Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
+    }
+
+    public IMovingStrategy getMovingStrategy() {
+        return this.movingStrategy;
+    }
+
+    public void toggleMovingStrategy() {
+        if (this.movingStrategy instanceof SimpleMovingStrategy) {
+            this.movingStrategy = new RealisticMovingStrategy();
+        }
+        else if (this.movingStrategy instanceof RealisticMovingStrategy) {
+            this.movingStrategy = new SimpleMovingStrategy();
+        }
+        else {
+
+        }
+    }
+
+    public void toggleShootingMode() {
+        this.cannon.toggleShootingMode();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    private static class Memento {
+        private int cannonPositionX;
+        private int cannonPositionY;
+        // game model snapshot (enemies, gameInfo, strategy, state)
+    }
+
+    public Object createMemento() {
+        Memento gameModelSnapshot = new Memento();
+        gameModelSnapshot.cannonPositionX = this.getCannonPosition().getX();
+        gameModelSnapshot.cannonPositionY = this.getCannonPosition().getY();
+        return gameModelSnapshot;
+    }
+
+    public void setMemento(Object memento) {
+        Memento gameModelSnapshot = (Memento) memento;
+        this.cannon.getPosition().setX(gameModelSnapshot.cannonPositionX);
+        this.cannon.getPosition().setY(gameModelSnapshot.cannonPositionY);
     }
 }

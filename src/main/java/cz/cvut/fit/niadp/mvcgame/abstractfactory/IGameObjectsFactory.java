@@ -8,9 +8,8 @@ public interface IGameObjectsFactory {
 
     AbsCannon createCannon();
     
-    AbsMissile createMissile();
-    
     void setModel(GameModel gameModel);
     
+    AbsMissile createMissile(double initAngle, int initVelocity);
     // TODO enemies, gameInfo
 }

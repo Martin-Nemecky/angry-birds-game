@@ -5,6 +5,7 @@ import java.util.List;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 // in the future, use Bridge to remove this dependency
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
+import cz.cvut.fit.niadp.mvcgame.memento.CareTaker;
 import cz.cvut.fit.niadp.mvcgame.model.GameModel;
 import cz.cvut.fit.niadp.mvcgame.sound.SoundObserver;
 import cz.cvut.fit.niadp.mvcgame.view.GameView;
@@ -23,6 +24,7 @@ public class MvcGame {
         this.controller = this.view.getController();
 
         new SoundObserver(model);
+        CareTaker.getInstance().setModel(this.model);
     }
 
     public void processPressedKeys(List<String> pressedKeysCodes) {
