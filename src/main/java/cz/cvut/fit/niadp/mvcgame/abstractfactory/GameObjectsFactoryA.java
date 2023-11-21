@@ -7,21 +7,19 @@ import cz.cvut.fit.niadp.mvcgame.model.gameObjects.CannonA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.MissileA;
 
 public class GameObjectsFactoryA implements IGameObjectsFactory {
+    
     private GameModel model;
+    
     private static IGameObjectsFactory instance;
 
-    public GameObjectsFactoryA(GameModel model) {
-        // TODO Singleton task
-        this.model = model;
-    }
-
-    public GameObjectsFactoryA() {
-        // TODO Singleton task
-    }
+    private GameObjectsFactoryA() {}
 
     public static IGameObjectsFactory getInstance() {
-        // TODO Singleton task
-        return new GameObjectsFactoryA();
+        if(instance == null) {
+            instance = new GameObjectsFactoryA();
+        }
+        
+        return instance;
     }
 
     @Override
@@ -32,5 +30,10 @@ public class GameObjectsFactoryA implements IGameObjectsFactory {
     @Override
     public MissileA createMissile() {
         return new MissileA(new Position(this.model.getCannonPosition().getX(), this.model.getCannonPosition().getY()));
+    }
+
+    @Override
+    public void setModel(GameModel gameModel){
+        this.model = gameModel;
     }
 }

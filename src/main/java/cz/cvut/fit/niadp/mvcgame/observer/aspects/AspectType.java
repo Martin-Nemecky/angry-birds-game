@@ -1,5 +1,5 @@
 package cz.cvut.fit.niadp.mvcgame.observer.aspects;
 
 public enum AspectType {
-    POSITION_CHANGE, CANNON_SHOOT
+    MISSILE_FIRED, MISSILE_MOVED, CANNON_MOVED
 }

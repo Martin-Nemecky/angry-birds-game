@@ -12,6 +12,7 @@ repositories {
 dependencies {
     implementation 'junit:junit:4.13.2'
     implementation 'org.openjfx:javafx-controls:20'
+    implementation 'org.openjfx:javafx-media:20'
     testImplementation 'org.jmockit:jmockit:1.49'
 }
 
@@ -21,7 +22,7 @@ application {
 
 javafx {
     version = "20"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media' ]
 }
 
 java {

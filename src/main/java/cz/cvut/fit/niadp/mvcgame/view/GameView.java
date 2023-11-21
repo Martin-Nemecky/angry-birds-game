@@ -3,7 +3,7 @@ package cz.cvut.fit.niadp.mvcgame.view;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
 import cz.cvut.fit.niadp.mvcgame.model.GameModel;
-import cz.cvut.fit.niadp.mvcgame.model.Position;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.view.NullableObject.IGraphicsContext;
@@ -20,7 +20,7 @@ public class GameView implements IObserver {
     public GameView(GameModel model) {
         this.model = model;
         this.controller = new GameController(this.model);
-        this.model.registerObserver(this, new AspectType[]{AspectType.POSITION_CHANGE, AspectType.CANNON_SHOOT});
+        this.model.registerObserver(this, new AspectType[]{AspectType.CANNON_MOVED, AspectType.MISSILE_MOVED});
         this.render = new GameObjectsRender();
     }
 
@@ -28,27 +28,22 @@ public class GameView implements IObserver {
         return this.controller;
     }
 
-    private <T> void render(T data) {
+    private <T extends GameObject> void render(T data) {
         // Clear the canvas
         this.gr.clearRect(0, 0, MvcGameConfig.MAX_X, MvcGameConfig.MAX_Y);
         this.model.getGameObjects().forEach(gameObject -> gameObject.acceptVisitor(this.render));
-        //this.drawCannon(data);
     }
 
     public void setGraphicsContext(IGraphicsContext gr) {
-        if(gr == null) {
-            this.gr = NullGraphicsContext.getInstance();
-            this.render.setGraphicsContext(this.gr);
-        } else {
-            this.gr = gr;
-            this.render.setGraphicsContext(this.gr);
-        }
+        if(gr == null) this.gr = NullGraphicsContext.getInstance();
+        else this.gr = gr;
         
-        this.render(new Position(MvcGameConfig.CANNON_POS_X, MvcGameConfig.CANNON_POS_Y));
+        this.render.setGraphicsContext(this.gr);
+        this.render(this.model.getCannon());
     }
 
     @Override
-    public <T> void update(T data) {
+    public <T extends GameObject> void update(T data) {
         this.render(data);
     }
 }

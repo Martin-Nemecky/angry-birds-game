@@ -10,8 +10,7 @@ import cz.cvut.fit.niadp.mvcgame.observer.IObservable;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.IAspect;
-import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.CannonShootAspect;
-import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.PositionChangeAspect;
+import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.SimpleAspect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +32,8 @@ public class GameModel implements IObservable {
         for(AspectType aspectType : AspectType.values()){
             this.observers.put(aspectType, new HashSet<>());
         }
-        this.gameObjectsFactory = new GameObjectsFactoryA(this);
+        this.gameObjectsFactory = GameObjectsFactoryA.getInstance();
+        this.gameObjectsFactory.setModel(this);
         this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
     }
@@ -45,7 +45,7 @@ public class GameModel implements IObservable {
     private void moveMissiles() {
         this.missiles.forEach(missile -> missile.move(new Vector(MvcGameConfig.MOVE_STEP, 0)));
         this.destroyMissiles();
-        this.missiles.forEach(missile -> this.notifyObservers(new PositionChangeAspect(missile.getPosition())));
+        this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
     }
 
     private void destroyMissiles() {
@@ -60,12 +60,18 @@ public class GameModel implements IObservable {
 
     public void moveCannonUp() {
         this.cannon.moveUp();
-        this.notifyObservers(new PositionChangeAspect(getCannonPosition()));
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, cannon));
     }
 
     public void moveCannonDown() {
         this.cannon.moveDown();
-        this.notifyObservers(new PositionChangeAspect(getCannonPosition()));
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, cannon));
+    }
+
+    public void cannonShoot() {
+        AbsMissile m = this.cannon.shoot();
+        this.missiles.add(m);
+        this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED, m));
     }
         
 
@@ -82,17 +88,16 @@ public class GameModel implements IObservable {
     }
 
     @Override
-    public <T> void notifyObservers(IAspect<T> aspect) {
+    public <T extends GameObject> void notifyObservers(IAspect<T> aspect) {
         this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getData()));
-    }
-
-    public void cannonShoot() {
-        this.missiles.add(this.cannon.shoot());
-        this.notifyObservers(new CannonShootAspect());
     }
 
     public List<AbsMissile> getMissiles() {
         return this.missiles;
+    }
+
+    public AbsCannon getCannon() {
+        return this.cannon;
     }
 
     public List<GameObject> getGameObjects() {

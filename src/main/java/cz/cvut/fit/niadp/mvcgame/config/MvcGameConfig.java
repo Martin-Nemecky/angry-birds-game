@@ -15,7 +15,14 @@ public class MvcGameConfig {
     public static final String EXIT_KEY = "ESCAPE";
     public static final String SHOOT_KEY = "SPACE";
 
-    public static final String CANNON_IMAGE_RESOURCE = "images/cannon.png";
+    public static final String CANNON_IMAGE_RESOURCE = "/images/cannon.png";
 
-    public static final String MISSILE_IMAGE_RESOURCE = "images/missile.png";
+    public static final String MISSILE_IMAGE_RESOURCE = "/images/missile.png";
+
+
+    public static final String MISSILE_STRETCH_SOUND_RESOURCE = "/sounds/stretch.wav";
+    public static final String MISSILE_FIRED_SOUND_RESOURCE = "/sounds/flying.wav";
+    public static final String CANNON_MOVED_SOUND_RESOURCE = "/sounds/move.wav";
+
+
 }
