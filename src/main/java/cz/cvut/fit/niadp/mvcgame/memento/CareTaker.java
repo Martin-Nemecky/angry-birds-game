@@ -1,11 +1,11 @@
 package cz.cvut.fit.niadp.mvcgame.memento;
 
-import cz.cvut.fit.niadp.mvcgame.model.GameModel;
+import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
 
 import java.util.Stack;
 
 public class CareTaker {
-    private GameModel model;
+    private IGameModel model;
 
     private final Stack<Object> mementos = new Stack<>();
 
@@ -21,7 +21,7 @@ public class CareTaker {
         return SingletonHolder.INSTANCE;
     }
 
-    public void setModel(GameModel model) {
+    public void setModel(IGameModel model) {
         this.model = model;
     }
 

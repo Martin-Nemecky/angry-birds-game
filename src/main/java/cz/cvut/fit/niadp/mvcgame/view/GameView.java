@@ -2,22 +2,19 @@ package cz.cvut.fit.niadp.mvcgame.view;
 
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
-import cz.cvut.fit.niadp.mvcgame.model.GameModel;
-import cz.cvut.fit.niadp.mvcgame.model.Position;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.AbsMissile;
+import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.visitor.GameObjectsRender;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class GameView implements IObserver {
 
-    private final GameModel model;
+    private final IGameModel model;
     private final GameController controller;
     private GraphicsContext gr;
     private final GameObjectsRender render;
 
-    public GameView(GameModel model) {
+    public GameView(IGameModel model) {
         this.model = model;
         this.controller = new GameController(this.model);
         this.model.registerObserver(this);
