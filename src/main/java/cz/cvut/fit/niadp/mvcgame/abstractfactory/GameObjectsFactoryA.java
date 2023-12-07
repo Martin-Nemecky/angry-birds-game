@@ -1,18 +1,24 @@
 package cz.cvut.fit.niadp.mvcgame.abstractfactory;
 
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
-import cz.cvut.fit.niadp.mvcgame.model.GameModel;
+import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.CannonA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.MissileA;
 
 public class GameObjectsFactoryA implements IGameObjectsFactory {
     
-    private GameModel model;
-    
+    private IGameModel model;
     private static IGameObjectsFactory instance;
 
-    private GameObjectsFactoryA() {}
+    public GameObjectsFactoryA(IGameModel model) {
+        // TODO Singleton task
+        this.model = model;
+    }
+
+    public GameObjectsFactoryA() {
+        // TODO Singleton task
+    }
 
     public static IGameObjectsFactory getInstance() {
         if(instance == null) {
@@ -38,7 +44,7 @@ public class GameObjectsFactoryA implements IGameObjectsFactory {
     }
 
     @Override
-    public void setModel(GameModel gameModel){
+    public void setModel(IGameModel gameModel){
         this.model = gameModel;
     }
 }

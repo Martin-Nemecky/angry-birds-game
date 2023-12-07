@@ -32,8 +32,7 @@ public class MvcGameConfig {
     public static final String POWER_DOWN_KEY = "D";
     public static final String MOVING_STRATEGY_KEY = "M";
     public static final String SHOOTING_MODE_KEY = "N";
-    public static final String STORE_SNAPSHOT_KEY = "S";
-    public static final String RESTORE_SNAPSHOT_KEY = "R";
+    public static final String UNDO_LAST_COMMAND_KEY = "B";
     public static final String INCREASE_BATCH_KEY = "I";
     public static final String DECREASE_BATCH_KEY = "U";
 
