@@ -14,6 +14,8 @@ import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.SimpleAspect;
 import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.SimpleMovingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.SystematicMovingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.ReverseRealisticMovingStrategy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,13 +80,6 @@ public class GameModel implements IObservable {
         this.missiles.addAll(missiles);
         this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED, missiles.get(0)));
     }
-    
-    @Override
-    public void registerObserver(IObserver observer, AspectType aspects[]) {
-        for(AspectType aspect : aspects){
-            this.observers.get(aspect).add(observer);
-        }    
-    }
 
     public void aimCannonUp() {
         this.cannon.aimUp();
@@ -104,6 +99,23 @@ public class GameModel implements IObservable {
     public void cannonPowerDown() {
         this.cannon.powerDown();
         this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    public void increaseCannonBatch() {
+        this.cannon.increaseBatch();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    public void decreaseCannonBatch() {
+        this.cannon.decreaseBatch();
+        this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+    }
+
+    @Override
+    public void registerObserver(IObserver observer, AspectType aspects[]) {
+        for(AspectType aspect : aspects){
+            this.observers.get(aspect).add(observer);
+        }    
     }
 
     @Override
@@ -137,10 +149,12 @@ public class GameModel implements IObservable {
             this.movingStrategy = new RealisticMovingStrategy();
         }
         else if (this.movingStrategy instanceof RealisticMovingStrategy) {
-            this.movingStrategy = new SimpleMovingStrategy();
+            this.movingStrategy = new ReverseRealisticMovingStrategy();
         }
-        else {
-
+        else if(this.movingStrategy instanceof ReverseRealisticMovingStrategy) {
+            this.movingStrategy = new SystematicMovingStrategy();
+        } else if(this.movingStrategy instanceof SystematicMovingStrategy){
+            this.movingStrategy = new SimpleMovingStrategy();
         }
     }
 

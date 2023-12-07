@@ -49,6 +49,12 @@ public class GameController {
                 case MvcGameConfig.RESTORE_SNAPSHOT_KEY:
                     CareTaker.getInstance().setMemento();
                     break;
+                case MvcGameConfig.INCREASE_BATCH_KEY:
+                    this.model.increaseCannonBatch();
+                    break;
+                case MvcGameConfig.DECREASE_BATCH_KEY:
+                    this.model.decreaseCannonBatch();
+                    break;
                 case MvcGameConfig.EXIT_KEY:
                     System.exit(0);
                     break;

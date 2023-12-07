@@ -5,6 +5,7 @@ import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
 import cz.cvut.fit.niadp.mvcgame.model.Vector;
 import cz.cvut.fit.niadp.mvcgame.state.DoubleShootingMode;
+import cz.cvut.fit.niadp.mvcgame.state.DynamicShootingMode;
 import cz.cvut.fit.niadp.mvcgame.state.SingleShootingMode;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class CannonA extends AbsCannon {
 
         this.power = MvcGameConfig.INIT_POWER;
         this.angle = MvcGameConfig.INIT_ANGLE;
+        this.batchSize = MvcGameConfig.INIT_BATCH_SIZE;
 
         this.shootingBatch = new ArrayList<>();
         this.shootingMode = SINGLE_SHOOTING_MODE;
@@ -38,12 +40,16 @@ public class CannonA extends AbsCannon {
 
     @Override
     public void aimUp() {
-        this.angle -= MvcGameConfig.ANGLE_STEP;
+        if(this.angle - MvcGameConfig.ANGLE_STEP > MvcGameConfig.MIN_ANGLE){
+            this.angle -= MvcGameConfig.ANGLE_STEP;
+        }
     }
 
     @Override
     public void aimDown() {
-        this.angle += MvcGameConfig.ANGLE_STEP;
+        if(this.angle + MvcGameConfig.ANGLE_STEP < MvcGameConfig.MAX_ANGLE){
+           this.angle += MvcGameConfig.ANGLE_STEP;
+        }
     }
 
     @Override
@@ -54,6 +60,20 @@ public class CannonA extends AbsCannon {
     @Override
     public void powerDown() {
         this.power = Math.max(MvcGameConfig.MIN_POWER, this.power - MvcGameConfig.POWER_STEP);
+    }
+
+    @Override
+    public void increaseBatch() {
+        if(this.batchSize < MvcGameConfig.MAX_BATCH_SIZE && this.shootingMode instanceof DynamicShootingMode){
+            this.batchSize += 1;
+        }
+    }
+
+    @Override
+    public void decreaseBatch() {
+        if(this.batchSize > MvcGameConfig.MIN_BATCH_SIZE && this.shootingMode instanceof DynamicShootingMode){
+            this.batchSize -= 1;
+        }
     }
 
     @Override
@@ -74,10 +94,10 @@ public class CannonA extends AbsCannon {
             this.shootingMode = DOUBLE_SHOOTING_MODE;
         }
         else if (this.shootingMode instanceof DoubleShootingMode) {
-            this.shootingMode = SINGLE_SHOOTING_MODE;
+            this.shootingMode = DYNAMIC_SHOOTING_MODE;
         }
-        else {
-
+        else if (this.shootingMode instanceof DynamicShootingMode) {
+            this.shootingMode = SINGLE_SHOOTING_MODE;
         }
     }
 }

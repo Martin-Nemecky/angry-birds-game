@@ -8,12 +8,17 @@ public class MvcGameConfig {
     public static final int CANNON_POS_X = 200;
     public static final int CANNON_POS_Y = MAX_Y / 2;
     public static final double ANGLE_STEP = Math.PI / 18;
+    public static final double MAX_ANGLE = Math.PI / 3;
+    public static final double MIN_ANGLE = -Math.PI / 3;
     public static final int POWER_STEP = 1;
     public static final int INIT_POWER = 10;
     public static final double INIT_ANGLE = 0;
+    public static final int INIT_BATCH_SIZE = 1;
     public static final double GRAVITY = 9.81;
     public static final int MAX_POWER = 50;
     public static final int MIN_POWER = 1;
+    public static final int MAX_BATCH_SIZE = 10;
+    public static final int MIN_BATCH_SIZE = 1;
 
     public static final String GAME_TITLE = "The NI-ADP MvcGame";
 
@@ -29,6 +34,8 @@ public class MvcGameConfig {
     public static final String SHOOTING_MODE_KEY = "N";
     public static final String STORE_SNAPSHOT_KEY = "S";
     public static final String RESTORE_SNAPSHOT_KEY = "R";
+    public static final String INCREASE_BATCH_KEY = "I";
+    public static final String DECREASE_BATCH_KEY = "U";
 
     public static final String CANNON_IMAGE_RESOURCE = "/images/cannon.png";
 
@@ -38,6 +45,4 @@ public class MvcGameConfig {
     public static final String MISSILE_STRETCH_SOUND_RESOURCE = "/sounds/stretch.wav";
     public static final String MISSILE_FIRED_SOUND_RESOURCE = "/sounds/flying.wav";
     public static final String CANNON_MOVED_SOUND_RESOURCE = "/sounds/move.wav";
-
-
 }
