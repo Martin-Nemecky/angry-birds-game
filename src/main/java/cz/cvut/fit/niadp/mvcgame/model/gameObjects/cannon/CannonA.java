@@ -1,9 +1,10 @@
-package cz.cvut.fit.niadp.mvcgame.model.gameObjects;
+package cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon;
 
 import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
 import cz.cvut.fit.niadp.mvcgame.model.Vector;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.state.DoubleShootingMode;
 import cz.cvut.fit.niadp.mvcgame.state.DynamicShootingMode;
 import cz.cvut.fit.niadp.mvcgame.state.SingleShootingMode;
@@ -30,12 +31,16 @@ public class CannonA extends AbsCannon {
 
     @Override
     public void moveUp() {
-        this.move(new Vector(0, -MvcGameConfig.MOVE_STEP));
+        if(this.position.getY() - MvcGameConfig.MOVE_STEP >= MvcGameConfig.CANNON_MIN_Y) {
+            this.move(new Vector(0, -MvcGameConfig.MOVE_STEP));
+        }
     }
 
     @Override
     public void moveDown() {
-        this.move(new Vector(0, MvcGameConfig.MOVE_STEP));
+        if(this.position.getY() + MvcGameConfig.MOVE_STEP <= MvcGameConfig.CANNON_MAX_Y) {
+            this.move(new Vector(0, MvcGameConfig.MOVE_STEP));
+        }
     }
 
     @Override

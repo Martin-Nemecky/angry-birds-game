@@ -1,7 +1,16 @@
 package cz.cvut.fit.niadp.mvcgame.controller;
 
+import cz.cvut.fit.niadp.mvcgame.command.AimCannonDownCommand;
+import cz.cvut.fit.niadp.mvcgame.command.AimCannonUpCommand;
+import cz.cvut.fit.niadp.mvcgame.command.DecreaseCannonBatchCommand;
+import cz.cvut.fit.niadp.mvcgame.command.IncreaseCannonBatchCommand;
 import cz.cvut.fit.niadp.mvcgame.command.MoveCannonDownCommand;
 import cz.cvut.fit.niadp.mvcgame.command.MoveCannonUpCommand;
+import cz.cvut.fit.niadp.mvcgame.command.PowerCannonDownCommand;
+import cz.cvut.fit.niadp.mvcgame.command.PowerCannonUpCommand;
+import cz.cvut.fit.niadp.mvcgame.command.ShootCommand;
+import cz.cvut.fit.niadp.mvcgame.command.ToggleMovingStrategyCommand;
+import cz.cvut.fit.niadp.mvcgame.command.ToggleShootingModeCommand;
 import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 
@@ -24,34 +33,34 @@ public class GameController {
                     this.model.registerCommand(new MoveCannonDownCommand(this.model));
                     break;
                 case MvcGameConfig.SHOOT_KEY:
-                    this.model.cannonShoot();
+                    this.model.registerCommand(new ShootCommand(model));
                     break;
                 case MvcGameConfig.AIM_UP_KEY:
-                    this.model.aimCannonUp();
+                    this.model.registerCommand(new AimCannonUpCommand(model));
                     break;
                 case MvcGameConfig.AIM_DOWN_KEY:
-                    this.model.aimCannonDown();
+                    this.model.registerCommand(new AimCannonDownCommand(model));
                     break;
                 case MvcGameConfig.POWER_UP_KEY:
-                    this.model.cannonPowerUp();
+                    this.model.registerCommand(new PowerCannonUpCommand(model));
                     break;
                 case MvcGameConfig.POWER_DOWN_KEY:
-                    this.model.cannonPowerDown();
+                    this.model.registerCommand(new PowerCannonDownCommand(model));
                     break;
                 case MvcGameConfig.MOVING_STRATEGY_KEY:
-                    this.model.toggleMovingStrategy();
+                    this.model.registerCommand(new ToggleMovingStrategyCommand(model));
                     break;
                 case MvcGameConfig.SHOOTING_MODE_KEY:
-                    this.model.toggleShootingMode();
+                    this.model.registerCommand(new ToggleShootingModeCommand(model));
+                    break;
+                case MvcGameConfig.INCREASE_BATCH_KEY:
+                    this.model.registerCommand(new IncreaseCannonBatchCommand(model));
+                    break;
+                case MvcGameConfig.DECREASE_BATCH_KEY:
+                    this.model.registerCommand(new DecreaseCannonBatchCommand(model));
                     break;
                 case MvcGameConfig.UNDO_LAST_COMMAND_KEY:
                     this.model.undoLastCommand();
-                    break;
-                case MvcGameConfig.INCREASE_BATCH_KEY:
-                    this.model.increaseCannonBatch();
-                    break;
-                case MvcGameConfig.DECREASE_BATCH_KEY:
-                    this.model.decreaseCannonBatch();
                     break;
                 case MvcGameConfig.EXIT_KEY:
                     System.exit(0);

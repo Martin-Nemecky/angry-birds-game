@@ -39,7 +39,7 @@ public class GameView implements IObserver {
     }
 
     @Override
-    public <T extends GameObject> void update(T data) {
+    public <T extends GameObject> void update(T data, AspectType type) {
         this.render(data);
     }
 }

@@ -2,11 +2,17 @@ package cz.cvut.fit.niadp.mvcgame.model;
 
 import cz.cvut.fit.niadp.mvcgame.abstractfactory.GameObjectsFactoryA;
 import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.collision_detection.ICollisionDetector;
+import cz.cvut.fit.niadp.mvcgame.collision_detection.SimpleCollisionDetector;
 import cz.cvut.fit.niadp.mvcgame.command.AbstractGameCommand;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.AbsCannon;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon.AbsCannon;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
+import cz.cvut.fit.niadp.mvcgame.model.levels.manager.ILevelManager;
+import cz.cvut.fit.niadp.mvcgame.model.levels.manager.LevelManager;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.IAspect;
@@ -24,11 +30,15 @@ import java.util.stream.Stream;
 public class GameModel implements IGameModel {
 
     private final AbsCannon cannon;
-    private final Map<AspectType, Set<IObserver>> observers;
-    private IGameObjectsFactory gameObjectsFactory;
     private final List<AbsMissile> missiles;
+
+    private IGameObjectsFactory gameObjectsFactory;
+
+    private final ILevelManager levelManager;
+
     private IMovingStrategy movingStrategy;
 
+    private final Map<AspectType, Set<IObserver>> observers;
     private final Queue<AbstractGameCommand> unexecutedCommands;
     private final Stack<AbstractGameCommand> executedCommands;
 
@@ -37,10 +47,16 @@ public class GameModel implements IGameModel {
         for(AspectType aspectType : AspectType.values()){
             this.observers.put(aspectType, new HashSet<>());
         }
+        
         this.gameObjectsFactory = GameObjectsFactoryA.getInstance();
         this.gameObjectsFactory.setModel(this);
+
+        this.levelManager = new LevelManager(this.gameObjectsFactory);
+        this.levelManager.init();
+        
         this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
+
         this.movingStrategy = new SimpleMovingStrategy();
         this.unexecutedCommands = new LinkedBlockingQueue<>();
         this.executedCommands = new Stack<>();
@@ -61,13 +77,66 @@ public class GameModel implements IGameModel {
 
     private void moveMissiles() {
         this.missiles.forEach(AbsMissile::move);
+
+        int prevSize = this.missiles.size();
         this.destroyMissiles();
-        this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
+        int currentSize = this.missiles.size();
+
+        if (this.missiles.isEmpty() && prevSize != currentSize) {
+            this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+        } else {
+            this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
+        }
     }
 
     private void destroyMissiles() {
         this.missiles.removeAll(
-            this.missiles.stream().filter(missile -> missile.getPosition().getX() > MvcGameConfig.MAX_X).toList()
+            this.missiles.stream().filter(missile -> {
+                return isOutOfScreen(missile) || hasCollided(missile); 
+            } ).toList()
+        );
+    }
+
+    private boolean hasCollided(AbsMissile missile) {
+        ICollisionDetector detector = SimpleCollisionDetector.getInstance();
+        List<AbsBound> bounds = this.levelManager.getLevelBounds();
+        List<AbsEnemy> enemies = this.levelManager.getLevelEnemies();
+
+        for(AbsBound bound : bounds) {
+            if(detector.detectCollision(missile, bound)){
+                this.notifyObservers(new SimpleAspect(AspectType.MISSILE_COLLISION, missile));
+                return true;
+            }
+        }
+
+        for(AbsEnemy enemy : enemies) {
+            if(detector.detectCollision(missile, enemy)){
+                if(enemy.isHurt()) {
+                    this.levelManager.removeEnemy(enemy);
+                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_DESTROYED, enemy));
+
+                    if(this.levelManager.getLevelEnemies().size() == 0){
+                        this.levelManager.nextLevel();
+                        this.notifyObservers(new SimpleAspect(AspectType.NEXT_LEVEL, enemy));
+                    }
+                    
+                } else {
+                    enemy.setIsHurt(true);
+                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isOutOfScreen(AbsMissile missile) {
+        return (
+            missile.getPosition().getX() >= MvcGameConfig.MAX_X + 100 ||
+            missile.getPosition().getX() <= - 100 ||
+            missile.getPosition().getY() >= MvcGameConfig.MAX_Y + 100 ||
+            missile.getPosition().getY() <= -100
         );
     }
 
@@ -135,7 +204,7 @@ public class GameModel implements IGameModel {
 
     @Override
     public <T extends GameObject> void notifyObservers(IAspect<T> aspect) {
-        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getData()));
+        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getData(), aspect.getAspectType()));
     }
 
     public List<AbsMissile> getMissiles() {
@@ -147,7 +216,8 @@ public class GameModel implements IGameModel {
     }
 
     public List<GameObject> getGameObjects() {
-        return Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
+        List<GameObject> temp = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
+        return Stream.concat(temp.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
     }
 
     public IMovingStrategy getMovingStrategy() {

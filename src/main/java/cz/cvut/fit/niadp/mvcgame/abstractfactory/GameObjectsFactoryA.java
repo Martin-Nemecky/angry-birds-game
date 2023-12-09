@@ -3,22 +3,19 @@ package cz.cvut.fit.niadp.mvcgame.abstractfactory;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.CannonA;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.MissileA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.BoundA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon.CannonA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.EnemyA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.MissileA;
 
 public class GameObjectsFactoryA implements IGameObjectsFactory {
     
     private IGameModel model;
     private static IGameObjectsFactory instance;
 
-    public GameObjectsFactoryA(IGameModel model) {
-        // TODO Singleton task
-        this.model = model;
-    }
-
-    public GameObjectsFactoryA() {
-        // TODO Singleton task
-    }
+    private GameObjectsFactoryA() {}
 
     public static IGameObjectsFactory getInstance() {
         if(instance == null) {
@@ -41,6 +38,16 @@ public class GameObjectsFactoryA implements IGameObjectsFactory {
                 initVelocity,
                 this.model.getMovingStrategy()
         );
+    }
+
+    @Override
+    public AbsEnemy createEnemy(Position position) {
+        return new EnemyA(position);
+    }
+
+    @Override
+    public AbsBound createBound(Position position) {
+        return new BoundA(position);
     }
 
     @Override

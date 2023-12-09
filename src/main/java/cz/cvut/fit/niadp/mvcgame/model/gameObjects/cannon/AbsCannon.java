@@ -1,5 +1,7 @@
-package cz.cvut.fit.niadp.mvcgame.model.gameObjects;
+package cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon;
 
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.state.DoubleShootingMode;
 import cz.cvut.fit.niadp.mvcgame.state.DynamicShootingMode;
 import cz.cvut.fit.niadp.mvcgame.state.IShootingMode;

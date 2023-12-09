@@ -17,14 +17,16 @@ public class MvcGame {
 
     private IGameModel model;
     private GameView view;
+    private SoundObserver soundObserver;
     private GameController controller;
     
     public void init() {
         this.model = new GameModelProxy(new GameModel());
         this.view = new GameView(model);
+        this.soundObserver = new SoundObserver(model);
+        soundObserver.init();
         this.controller = this.view.getController();
 
-        new SoundObserver(model);
         CareTaker.getInstance().setModel(this.model);
     }
 
