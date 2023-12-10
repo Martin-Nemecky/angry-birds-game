@@ -1,7 +1,6 @@
 package cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles;
 
 import cz.cvut.fit.niadp.mvcgame.model.Position;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 
 public class MissileA extends AbsMissile {

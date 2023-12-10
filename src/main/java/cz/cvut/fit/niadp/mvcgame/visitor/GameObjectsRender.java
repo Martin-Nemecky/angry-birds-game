@@ -20,6 +20,15 @@ public class GameObjectsRender implements IGameObjectsVisitor {
     @Override
     public void visitCannon(AbsCannon cannon) {
         this.gameGraphics.drawImage(MvcGameConfig.CANNON_IMAGE_RESOURCE, cannon.getPosition());
+        
+        int startX = cannon.getPosition().getX() + 40;
+        int startY = cannon.getPosition().getY() + 20;
+        
+        int endX = (int) Math.round(Math.cos(cannon.getAngle()) * 100) + cannon.getPosition().getX() + 40; 
+        int endY = (int) Math.round(Math.sin(cannon.getAngle()) * 100) + cannon.getPosition().getY() + 20;
+
+
+        this.gameGraphics.drawLine(new Position(startX, startY), new Position(endX, endY));
     }
 
     @Override

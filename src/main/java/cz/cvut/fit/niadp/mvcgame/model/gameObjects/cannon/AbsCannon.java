@@ -44,6 +44,10 @@ public abstract class AbsCannon extends GameObject {
         return this.batchSize;
     }
 
+    public double getAngle() {
+        return this.angle;
+    }
+
     @Override
     public abstract AbsCannon clone();
 }

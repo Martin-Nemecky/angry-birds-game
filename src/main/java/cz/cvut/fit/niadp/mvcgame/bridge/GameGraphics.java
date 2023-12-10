@@ -32,4 +32,9 @@ public class GameGraphics implements IGameGraphics {
     public void clear() {
         this.implementor.clear();
     }
+
+    @Override
+    public void drawLine(Position start, Position end) {
+       this.implementor.drawLine(start, end);
+    }
 }
