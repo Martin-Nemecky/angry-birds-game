@@ -9,10 +9,7 @@ public class Level2 extends AbsLevel {
 
     public Level2(IGameObjectsFactory factory) {
         super(factory);
-    }
 
-    @Override
-    public void init() {
         this.bounds.addAll(List.of(
             gameObjectsFactory.createBound(new Position(1170, 660)),
             gameObjectsFactory.createBound(new Position(1200, 660)),
@@ -47,5 +44,4 @@ public class Level2 extends AbsLevel {
             gameObjectsFactory.createEnemy(new Position(1600, 400))
         ));
     }
-    
 }

@@ -19,7 +19,11 @@ public abstract class AbsLevel {
         enemies = new ArrayList<>();
     }
 
-    public abstract void init();
+    public AbsLevel(List<AbsBound> bounds, List<AbsEnemy> enemies, IGameObjectsFactory factory){
+        this.bounds = bounds;
+        this.enemies = enemies;
+        this.gameObjectsFactory = factory;
+    }
 
     public void removeEnemy(AbsEnemy enemy) {
         this.enemies.remove(enemy);

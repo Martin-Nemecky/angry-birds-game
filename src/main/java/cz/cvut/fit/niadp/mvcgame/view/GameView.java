@@ -26,7 +26,7 @@ public class GameView implements IObserver {
         return this.controller;
     }
 
-    private <T extends GameObject> void render(T data) {
+    private void render() {
         // Clear the canvas
         this.gameGraphics.clear();
         this.model.getGameObjects().forEach(gameObject -> gameObject.acceptVisitor(this.render));
@@ -35,11 +35,11 @@ public class GameView implements IObserver {
     public void setGraphicsContext(IGameGraphics gameGraphics) {
         this.gameGraphics = gameGraphics;
         this.render.setGraphicsContext(gameGraphics);
-        this.render(this.model.getCannon());
+        this.render();
     }
 
     @Override
-    public <T extends GameObject> void update(T data, AspectType type) {
-        this.render(data);
+    public void update(AspectType type) {
+        this.render();
     }
 }

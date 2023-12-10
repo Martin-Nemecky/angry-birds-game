@@ -12,5 +12,10 @@ public class BoundA extends AbsBound {
     @Override
     public void acceptVisitor(IGameObjectsVisitor visitor) {
         visitor.visitBound(this);
+    }
+
+    @Override
+    public BoundA clone() {
+        return new BoundA(new Position(this.position.getX(), this.position.getY()));
     }   
 }

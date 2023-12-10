@@ -9,9 +9,18 @@ public class EnemyA extends AbsEnemy {
         super(position);
     }
 
+    public EnemyA(Position position, boolean isHurt) {
+        super(position, isHurt);
+    }
+
     @Override
     public void acceptVisitor(IGameObjectsVisitor visitor) {
        visitor.visitEnemy(this);
+    }
+
+    @Override
+    public EnemyA clone() {
+        return new EnemyA(new Position(this.position.getX(), this.position.getY()), this.isHurt);
     }
     
 }

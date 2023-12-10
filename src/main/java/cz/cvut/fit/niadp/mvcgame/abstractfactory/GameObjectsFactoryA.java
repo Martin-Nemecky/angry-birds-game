@@ -6,8 +6,12 @@ import cz.cvut.fit.niadp.mvcgame.model.Position;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.BoundA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon.CannonA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.collisions.AbsCollision;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.collisions.CollisionA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.EnemyA;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.info.AbsGameInfo;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.info.SimpleGameInfo;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.MissileA;
 
 public class GameObjectsFactoryA implements IGameObjectsFactory {
@@ -48,6 +52,16 @@ public class GameObjectsFactoryA implements IGameObjectsFactory {
     @Override
     public AbsBound createBound(Position position) {
         return new BoundA(position);
+    }
+
+    @Override
+    public AbsGameInfo createGameInfo() {
+        return new SimpleGameInfo();
+    }
+
+    @Override
+    public AbsCollision createCollision(Position position) {
+        return new CollisionA(position);
     }
 
     @Override

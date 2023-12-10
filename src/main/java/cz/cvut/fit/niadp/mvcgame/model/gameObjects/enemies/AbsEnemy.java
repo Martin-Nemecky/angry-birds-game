@@ -5,10 +5,15 @@ import cz.cvut.fit.niadp.mvcgame.model.gameObjects.LifetimeLimitedGameObject;
 
 public abstract class AbsEnemy extends LifetimeLimitedGameObject {
 
-    private boolean isHurt;
+    protected boolean isHurt;
 
     protected AbsEnemy(Position position) {
         super(position);
+    }
+
+    protected AbsEnemy(Position position, boolean isHurt) {
+        super(position);
+        this.isHurt = isHurt;
     }
 
     public void setIsHurt(boolean isHurt) {
@@ -18,5 +23,4 @@ public abstract class AbsEnemy extends LifetimeLimitedGameObject {
     public boolean isHurt() {
         return this.isHurt;
     }
-    
 }

@@ -9,7 +9,9 @@ import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.cannon.AbsCannon;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.collisions.AbsCollision;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.info.AbsGameInfo;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.model.levels.manager.ILevelManager;
 import cz.cvut.fit.niadp.mvcgame.model.levels.manager.LevelManager;
@@ -31,6 +33,7 @@ public class GameModel implements IGameModel {
 
     private final AbsCannon cannon;
     private final List<AbsMissile> missiles;
+    private final AbsGameInfo gameInfo;
 
     private IGameObjectsFactory gameObjectsFactory;
 
@@ -52,10 +55,10 @@ public class GameModel implements IGameModel {
         this.gameObjectsFactory.setModel(this);
 
         this.levelManager = new LevelManager(this.gameObjectsFactory);
-        this.levelManager.init();
         
         this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
+        this.gameInfo = this.gameObjectsFactory.createGameInfo(); 
 
         this.movingStrategy = new SimpleMovingStrategy();
         this.unexecutedCommands = new LinkedBlockingQueue<>();
@@ -92,7 +95,7 @@ public class GameModel implements IGameModel {
     private void destroyMissiles() {
         this.missiles.removeAll(
             this.missiles.stream().filter(missile -> {
-                return isOutOfScreen(missile) || hasCollided(missile); 
+                return isOutOfScreen(missile) || hasCollided(missile);
             } ).toList()
         );
     }
@@ -111,19 +114,23 @@ public class GameModel implements IGameModel {
 
         for(AbsEnemy enemy : enemies) {
             if(detector.detectCollision(missile, enemy)){
-                if(enemy.isHurt()) {
+                if(! enemy.isHurt()){
+                    enemy.setIsHurt(true);
+                    this.gameInfo.increaseScore(5);
+                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
+                } else {
                     this.levelManager.removeEnemy(enemy);
+                    this.gameInfo.increaseScore(10);
                     this.notifyObservers(new SimpleAspect(AspectType.ENEMY_DESTROYED, enemy));
 
                     if(this.levelManager.getLevelEnemies().size() == 0){
                         this.levelManager.nextLevel();
+                        this.gameInfo.increaseScore(50);
+                        this.gameInfo.increaseLevel();
                         this.notifyObservers(new SimpleAspect(AspectType.NEXT_LEVEL, enemy));
                     }
-                    
-                } else {
-                    enemy.setIsHurt(true);
-                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
                 }
+
                 return true;
             }
         }
@@ -133,10 +140,10 @@ public class GameModel implements IGameModel {
 
     private boolean isOutOfScreen(AbsMissile missile) {
         return (
-            missile.getPosition().getX() >= MvcGameConfig.MAX_X + 100 ||
-            missile.getPosition().getX() <= - 100 ||
-            missile.getPosition().getY() >= MvcGameConfig.MAX_Y + 100 ||
-            missile.getPosition().getY() <= -100
+            missile.getPosition().getX() >= MvcGameConfig.MAX_X ||
+            missile.getPosition().getX() <= 0 ||
+            missile.getPosition().getY() >= MvcGameConfig.MAX_Y ||
+            missile.getPosition().getY() <= 0
         );
     }
 
@@ -204,7 +211,7 @@ public class GameModel implements IGameModel {
 
     @Override
     public <T extends GameObject> void notifyObservers(IAspect<T> aspect) {
-        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getData(), aspect.getAspectType()));
+        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getAspectType()));
     }
 
     public List<AbsMissile> getMissiles() {
@@ -216,8 +223,9 @@ public class GameModel implements IGameModel {
     }
 
     public List<GameObject> getGameObjects() {
-        List<GameObject> temp = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
-        return Stream.concat(temp.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
+        List<GameObject> temp1 = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
+        List<GameObject> temp2 = Stream.concat(Stream.of(this.gameInfo), temp1.stream()).toList();
+        return Stream.concat(temp2.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
     }
 
     public IMovingStrategy getMovingStrategy() {
@@ -246,6 +254,7 @@ public class GameModel implements IGameModel {
     private static class Memento {
         private int cannonPositionX;
         private int cannonPositionY;
+        private AbsGameInfo gameInfo;
         // game model snapshot (enemies, gameInfo, strategy, state)
     }
 

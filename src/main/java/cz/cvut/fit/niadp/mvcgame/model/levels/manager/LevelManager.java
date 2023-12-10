@@ -1,10 +1,10 @@
 package cz.cvut.fit.niadp.mvcgame.model.levels.manager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
@@ -22,35 +22,33 @@ public class LevelManager implements ILevelManager {
     private IGameObjectsFactory factory;
 
     public LevelManager(IGameObjectsFactory factory) {
-        this.currentLevel = 3;
-        levels = new ArrayList<>();
+        this.currentLevel = 1;
         this.factory = factory;
+        levels = List.of(new Level1(factory), new Level2(factory),  new Level3(factory));
     }
 
-    public void init() {
-        Level1 level1 = new Level1(factory);
-        level1.init();
-        Level2 level2 = new Level2(factory);
-        level2.init();
-        Level3 level3 = new Level3(factory);
-        level3.init();
-
-        levels.addAll(List.of(
-            level1, level2, level3
-        ));
-    }
-    
-    public int getCurrentLevelNumber() {
-        return this.currentLevel;
+    public LevelManager(int currentLevel, List<AbsLevel> levels, IGameObjectsFactory factory) {
+        this.currentLevel = currentLevel;
+        this.levels = levels;
+        this.factory = factory;
     }
 
     @Override
     public void nextLevel() {
-        this.currentLevel = (this.currentLevel % this.levels.size()) + 1;
+        this.currentLevel = (this.currentLevel % MvcGameConfig.LEVEL_COUNT) + 1;
         if(this.currentLevel == 1) {
             this.levels.clear();
-            init();
+            levels.addAll(List.of(new Level1(factory), new Level2(factory),  new Level3(factory)));
         }
+    }
+
+    @Override
+    public void removeEnemy(AbsEnemy enemy) {
+        levels.get(this.currentLevel - 1).removeEnemy(enemy);
+    }
+
+    public int getCurrentLevelNumber() {
+        return this.currentLevel;
     }
 
     @Override
@@ -66,10 +64,5 @@ public class LevelManager implements ILevelManager {
     @Override
     public List<GameObject> getLevelGameObjects() {
         return Stream.concat(getLevelBounds().stream(), getLevelEnemies().stream()).toList();
-    }
-
-    @Override
-    public void removeEnemy(AbsEnemy enemy) {
-        levels.get(this.currentLevel - 1).removeEnemy(enemy);
     }
 }

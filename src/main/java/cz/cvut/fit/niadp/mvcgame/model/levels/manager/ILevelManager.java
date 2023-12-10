@@ -8,17 +8,15 @@ import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
 
 public interface ILevelManager {
 
-    void init();
-
     void nextLevel();
+
+    void removeEnemy(AbsEnemy enemy);
+
+    int getCurrentLevelNumber();
 
     List<AbsBound> getLevelBounds();
 
     List<AbsEnemy> getLevelEnemies();
 
     List<GameObject> getLevelGameObjects();
-
-    int getCurrentLevelNumber();
-
-    void removeEnemy(AbsEnemy enemy);
 }

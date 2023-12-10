@@ -4,7 +4,6 @@ import java.io.File;
 
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import javafx.scene.media.AudioClip;
@@ -66,7 +65,7 @@ public class SoundObserver implements IObserver {
     }
 
     @Override
-    public <T extends GameObject> void update(T data, AspectType type) {
+    public void update(AspectType type) {
         switch (type) {
             case CANNON_MOVED:
                 if(!moveClip.isPlaying()) moveClip.play();

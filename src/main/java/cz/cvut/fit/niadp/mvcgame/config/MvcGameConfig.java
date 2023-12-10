@@ -24,6 +24,7 @@ public class MvcGameConfig {
     public static final int MAX_ENEMIES_COUNT = 8;
 
     public static final int GAME_OBJECT_SIZE = 30;
+    public static final int LEVEL_COUNT = 3;
 
     public static final String GAME_TITLE = "The NI-ADP MvcGame";
 
