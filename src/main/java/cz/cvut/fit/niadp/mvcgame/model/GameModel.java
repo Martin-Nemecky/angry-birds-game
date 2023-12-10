@@ -38,7 +38,7 @@ public class GameModel implements IGameModel {
 
     private IGameObjectsFactory gameObjectsFactory;
 
-    private final ILevelManager levelManager;
+    private ILevelManager levelManager;
 
     private IMovingStrategy movingStrategy;
 
@@ -102,7 +102,7 @@ public class GameModel implements IGameModel {
         int currentSize = this.missiles.size();
 
         if (this.missiles.isEmpty() && prevSize != currentSize) {
-            this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+            this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
         } else {
             this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
         }
@@ -272,14 +272,19 @@ public class GameModel implements IGameModel {
     private static class Memento {
         private int cannonPositionX;
         private int cannonPositionY;
-        private AbsGameInfo gameInfo;
-        // game model snapshot (enemies, gameInfo, strategy, state)
+        private List<AbsEnemy> enemies;
+        private int currentLevel;
+        private int score;
     }
 
     public Object createMemento() {
         Memento gameModelSnapshot = new Memento();
         gameModelSnapshot.cannonPositionX = this.getCannonPosition().getX();
         gameModelSnapshot.cannonPositionY = this.getCannonPosition().getY();
+        gameModelSnapshot.enemies = this.levelManager.getLevelEnemies();
+        gameModelSnapshot.currentLevel = this.levelManager.getCurrentLevelNumber();
+        gameModelSnapshot.score = this.gameInfo.getScore();
+        
         return gameModelSnapshot;
     }
 
@@ -287,6 +292,10 @@ public class GameModel implements IGameModel {
         Memento gameModelSnapshot = (Memento) memento;
         this.cannon.getPosition().setX(gameModelSnapshot.cannonPositionX);
         this.cannon.getPosition().setY(gameModelSnapshot.cannonPositionY);
+        this.levelManager.setCurrentLevelNumber(gameModelSnapshot.currentLevel);
+        this.levelManager.setLevelEnemies(gameModelSnapshot.enemies);
+        this.gameInfo.setScore(gameModelSnapshot.score);
+        this.gameInfo.setLevel(gameModelSnapshot.currentLevel);
     }
 
     @Override

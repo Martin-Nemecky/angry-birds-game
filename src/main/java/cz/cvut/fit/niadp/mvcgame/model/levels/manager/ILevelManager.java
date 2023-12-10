@@ -15,9 +15,15 @@ public interface ILevelManager {
 
     int getCurrentLevelNumber();
 
+    void setCurrentLevelNumber(int level);
+
     List<AbsBound> getLevelBounds();
 
     List<AbsEnemy> getLevelEnemies();
 
+    void setLevelEnemies(List<AbsEnemy> enemies);
+
     List<GameObject> getLevelGameObjects();
+
+    ILevelManager clone();
 }

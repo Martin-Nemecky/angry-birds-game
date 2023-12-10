@@ -22,7 +22,7 @@ public class LevelManager implements ILevelManager {
     private IGameObjectsFactory factory;
 
     public LevelManager(IGameObjectsFactory factory) {
-        this.currentLevel = 3;
+        this.currentLevel = 1;
         this.factory = factory;
         levels = List.of(new Level1(factory), new Level2(factory),  new Level3(factory));
     }
@@ -55,6 +55,10 @@ public class LevelManager implements ILevelManager {
         return this.currentLevel;
     }
 
+    public void setCurrentLevelNumber(int level) {
+        this.currentLevel = level;
+    }
+
     @Override
     public List<AbsBound> getLevelBounds() {
         return levels.get(this.currentLevel - 1).getBounds();
@@ -66,7 +70,21 @@ public class LevelManager implements ILevelManager {
     }
 
     @Override
+    public void setLevelEnemies(List<AbsEnemy> enemies) {
+        levels.get(this.currentLevel - 1).setEnemies(enemies);
+    }
+
+    @Override
     public List<GameObject> getLevelGameObjects() {
         return Stream.concat(getLevelBounds().stream(), getLevelEnemies().stream()).toList();
+    }
+
+    @Override
+    public LevelManager clone() {
+        return new LevelManager(
+            this.currentLevel, 
+            this.levels.stream().map(l -> l.clone()).toList(),
+            this.factory
+        );
     }
 }

@@ -18,5 +18,4 @@ public abstract class AbstractGameCommand {
     public void unExecute() {
         this.subject.setMemento(this.memento);
     }
-
 }

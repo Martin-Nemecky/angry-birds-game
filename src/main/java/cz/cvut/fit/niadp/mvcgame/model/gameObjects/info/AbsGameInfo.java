@@ -18,8 +18,20 @@ public abstract class AbsGameInfo extends LifetimeUnlimitedGameObject {
         return this.score;
     }
 
+    public void setScore(int score){
+        if(score >= 0){
+            this.score = score;
+        }
+    }
+
     public int getLevel() {
         return this.level;
+    }
+
+    public void setLevel(int level) {
+        if(level >= 1) {
+            this.level = level;
+        }
     }
 
     public void increaseScore(int score) {

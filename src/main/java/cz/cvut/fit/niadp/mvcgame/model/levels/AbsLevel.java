@@ -10,8 +10,8 @@ import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
 public abstract class AbsLevel {
 
     protected final IGameObjectsFactory gameObjectsFactory;
-    protected final List<AbsBound> bounds; 
-    protected final List<AbsEnemy> enemies;
+    protected List<AbsBound> bounds; 
+    protected List<AbsEnemy> enemies;
 
     public AbsLevel(IGameObjectsFactory factory) {
         this.gameObjectsFactory = factory;
@@ -40,4 +40,11 @@ public abstract class AbsLevel {
     public List<AbsEnemy> getEnemies() {
         return this.enemies.stream().map(e -> e.clone()).toList();
     } 
+
+    public void setEnemies(List<AbsEnemy> enemies) {
+        this.enemies.clear();
+        this.enemies.addAll(enemies);
+    }
+
+    public abstract AbsLevel clone();
 }

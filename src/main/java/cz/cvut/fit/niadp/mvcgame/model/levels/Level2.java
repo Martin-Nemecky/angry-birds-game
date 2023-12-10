@@ -4,12 +4,21 @@ import java.util.List;
 
 import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
+import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
 
 public class Level2 extends AbsLevel {
 
     public Level2(IGameObjectsFactory factory) {
         super(factory);
+        init();
+    }
 
+    public Level2(List<AbsBound> bounds, List<AbsEnemy> enemies, IGameObjectsFactory factory){
+        super(bounds, enemies, factory);
+    }
+
+    private void init() {
         this.bounds.addAll(List.of(
             gameObjectsFactory.createBound(new Position(1170, 660)),
             gameObjectsFactory.createBound(new Position(1200, 660)),
@@ -43,5 +52,10 @@ public class Level2 extends AbsLevel {
             gameObjectsFactory.createEnemy(new Position(800, 700), false),
             gameObjectsFactory.createEnemy(new Position(1600, 400), false)
         ));
+    }
+
+    @Override
+    public Level2 clone() {
+        return new Level2(getBounds(), getEnemies(), this.gameObjectsFactory);
     }
 }
