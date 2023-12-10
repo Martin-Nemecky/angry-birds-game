@@ -29,5 +29,8 @@ public abstract class AbsGameInfo extends LifetimeUnlimitedGameObject {
     public void increaseLevel() {
         this.level = (this.level % MvcGameConfig.LEVEL_COUNT) + 1;
     }
+
+    @Override 
+    public abstract AbsGameInfo clone();
     
 }

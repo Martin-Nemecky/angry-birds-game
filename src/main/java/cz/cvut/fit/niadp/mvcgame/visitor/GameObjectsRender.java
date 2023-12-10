@@ -50,6 +50,6 @@ public class GameObjectsRender implements IGameObjectsVisitor {
 
     @Override
     public void visitCollision(AbsCollision collision) {
-        this.gameGraphics.drawImage((MvcGameConfig.HURT_ENEMY1_IMAGE_RESOURCE), collision.getPosition());
+        this.gameGraphics.drawImage((MvcGameConfig.COLLISION_IMAGE_RESOURCE), collision.getPosition());
     }
 }

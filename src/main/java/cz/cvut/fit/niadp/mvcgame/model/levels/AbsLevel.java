@@ -25,15 +25,19 @@ public abstract class AbsLevel {
         this.gameObjectsFactory = factory;
     }
 
+    public void addHurtEnemy(AbsEnemy enemy) {
+        this.enemies.add(enemy);
+    }
+
     public void removeEnemy(AbsEnemy enemy) {
-        this.enemies.remove(enemy);
+        this.enemies.removeIf(e -> e.getPosition().getX() == enemy.getPosition().getX() && e.getPosition().getY() == enemy.getPosition().getY());
     }
     
     public List<AbsBound> getBounds() {
-        return this.bounds;
+        return this.bounds.stream().map(b -> b.clone()).toList();
     }
 
     public List<AbsEnemy> getEnemies() {
-        return this.enemies;
+        return this.enemies.stream().map(e -> e.clone()).toList();
     } 
 }

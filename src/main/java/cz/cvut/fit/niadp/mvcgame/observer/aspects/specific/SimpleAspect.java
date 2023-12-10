@@ -8,7 +8,11 @@ public class SimpleAspect implements IAspect<GameObject> {
 
     private final AspectType type;
 
-    private final GameObject gameObject;
+    private GameObject gameObject;
+
+    public SimpleAspect(AspectType type) {
+        this.type = type;
+    }
 
     public SimpleAspect(AspectType aspectType, GameObject gameObject){
         this.gameObject = gameObject;

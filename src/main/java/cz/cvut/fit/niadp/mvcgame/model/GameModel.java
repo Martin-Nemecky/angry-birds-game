@@ -33,6 +33,7 @@ public class GameModel implements IGameModel {
 
     private final AbsCannon cannon;
     private final List<AbsMissile> missiles;
+    private final List<AbsCollision> collisions;
     private final AbsGameInfo gameInfo;
 
     private IGameObjectsFactory gameObjectsFactory;
@@ -58,6 +59,7 @@ public class GameModel implements IGameModel {
         
         this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
+        this.collisions = new ArrayList<>();
         this.gameInfo = this.gameObjectsFactory.createGameInfo(); 
 
         this.movingStrategy = new SimpleMovingStrategy();
@@ -68,6 +70,20 @@ public class GameModel implements IGameModel {
     public void update() {
         this.executeCommands();
         this.moveMissiles();
+        this.checkCollisions();
+    }
+
+    private void checkCollisions() {
+        this.collisions.removeAll(
+            this.collisions.stream().filter(collision -> {
+                if(collision.getAge() >= 500){
+                    this.levelManager.addHurtEnemy(this.gameObjectsFactory.createEnemy(collision.getPosition(), true));
+                    return true;
+                } 
+                return false;
+            } ).toList()
+        );
+        this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
     }
 
     private void executeCommands() {
@@ -115,7 +131,8 @@ public class GameModel implements IGameModel {
         for(AbsEnemy enemy : enemies) {
             if(detector.detectCollision(missile, enemy)){
                 if(! enemy.isHurt()){
-                    enemy.setIsHurt(true);
+                    this.levelManager.removeEnemy(enemy);
+                    this.collisions.add(this.gameObjectsFactory.createCollision(enemy.getPosition()));
                     this.gameInfo.increaseScore(5);
                     this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
                 } else {
@@ -123,7 +140,7 @@ public class GameModel implements IGameModel {
                     this.gameInfo.increaseScore(10);
                     this.notifyObservers(new SimpleAspect(AspectType.ENEMY_DESTROYED, enemy));
 
-                    if(this.levelManager.getLevelEnemies().size() == 0){
+                    if(this.levelManager.getLevelEnemies().size() == 0 && this.collisions.size() == 0){
                         this.levelManager.nextLevel();
                         this.gameInfo.increaseScore(50);
                         this.gameInfo.increaseLevel();
@@ -225,7 +242,8 @@ public class GameModel implements IGameModel {
     public List<GameObject> getGameObjects() {
         List<GameObject> temp1 = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
         List<GameObject> temp2 = Stream.concat(Stream.of(this.gameInfo), temp1.stream()).toList();
-        return Stream.concat(temp2.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
+        List<GameObject> temp3 = Stream.concat(this.collisions.stream(), temp2.stream()).toList();
+        return Stream.concat(temp3.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
     }
 
     public IMovingStrategy getMovingStrategy() {
@@ -280,7 +298,7 @@ public class GameModel implements IGameModel {
     public void undoLastCommand() {
         if (!this.executedCommands.isEmpty()) {
             this.executedCommands.pop().unExecute();
-            this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
+            this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
         }
     }
 }

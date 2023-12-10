@@ -47,7 +47,7 @@ public class MvcGameConfig {
     public static final String BACK_IMAGE_RESOURCE = "/images/resized_back.jpg";
     public static final String ENEMY1_IMAGE_RESOURCE = "/images/enemy1.png";
     public static final String HURT_ENEMY1_IMAGE_RESOURCE = "/images/collision.png";
-    public static final String ENEMY2_IMAGE_RESOURCE = "/images/enemy2.png";
+    public static final String COLLISION_IMAGE_RESOURCE = "/images/enemy2WithBlood.png";
     public static final String BOUND_IMAGE_RESOURCE = "/images/bound.png";
 
     public static final String MISSILE_COLLISION_SOUND_RESOURCE = "/sounds/rock_damage.wav";

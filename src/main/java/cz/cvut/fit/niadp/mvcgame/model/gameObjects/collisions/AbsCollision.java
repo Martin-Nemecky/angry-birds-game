@@ -8,4 +8,6 @@ public abstract class AbsCollision extends LifetimeLimitedGameObject {
     protected AbsCollision(Position position) {
         super(position);
     }
+
+    public abstract AbsCollision clone();
 }

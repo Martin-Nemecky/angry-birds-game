@@ -17,7 +17,7 @@ public interface IGameObjectsFactory {
     
     AbsMissile createMissile(double initAngle, int initVelocity);
 
-    AbsEnemy createEnemy(Position position);
+    AbsEnemy createEnemy(Position position, boolean isHurt);
 
     AbsCollision createCollision(Position position);
 

@@ -43,4 +43,7 @@ public abstract class AbsCannon extends GameObject {
     public int getBatchSize() {
         return this.batchSize;
     }
+
+    @Override
+    public abstract AbsCannon clone();
 }

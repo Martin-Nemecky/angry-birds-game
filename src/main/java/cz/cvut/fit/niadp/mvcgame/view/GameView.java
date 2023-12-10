@@ -3,7 +3,6 @@ package cz.cvut.fit.niadp.mvcgame.view;
 import cz.cvut.fit.niadp.mvcgame.bridge.IGameGraphics;
 import cz.cvut.fit.niadp.mvcgame.controller.GameController;
 import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
-import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.visitor.GameObjectsRender;
@@ -18,7 +17,11 @@ public class GameView implements IObserver {
     public GameView(IGameModel model) {
         this.model = model;
         this.controller = new GameController(this.model);
-        this.model.registerObserver(this, new AspectType[]{AspectType.CANNON_MOVED, AspectType.MISSILE_MOVED});
+        this.model.registerObserver(this, new AspectType[]{
+            AspectType.CANNON_MOVED,
+            AspectType.MISSILE_MOVED,
+            AspectType.DEFAULT
+        });
         this.render = new GameObjectsRender();
     }
 

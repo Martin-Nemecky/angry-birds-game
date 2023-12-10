@@ -45,8 +45,8 @@ public class GameObjectsFactoryA implements IGameObjectsFactory {
     }
 
     @Override
-    public AbsEnemy createEnemy(Position position) {
-        return new EnemyA(position);
+    public AbsEnemy createEnemy(Position position, boolean isHurt) {
+        return new EnemyA(position, isHurt);
     }
 
     @Override

@@ -23,4 +23,7 @@ public abstract class AbsEnemy extends LifetimeLimitedGameObject {
     public boolean isHurt() {
         return this.isHurt;
     }
+
+    @Override
+    public abstract AbsEnemy clone();
 }

@@ -10,6 +10,7 @@ public interface ILevelManager {
 
     void nextLevel();
 
+    void addHurtEnemy(AbsEnemy hurtEnemy);
     void removeEnemy(AbsEnemy enemy);
 
     int getCurrentLevelNumber();

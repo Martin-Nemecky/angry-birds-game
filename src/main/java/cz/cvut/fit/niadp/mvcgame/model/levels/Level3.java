@@ -22,7 +22,7 @@ public class Level3 extends AbsLevel {
 
 
         this.enemies.addAll(List.of(
-            gameObjectsFactory.createEnemy(new Position(1300, 600))
+            gameObjectsFactory.createEnemy(new Position(1300, 600), false)
         ));
     }
 }

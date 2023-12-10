@@ -22,7 +22,7 @@ public class LevelManager implements ILevelManager {
     private IGameObjectsFactory factory;
 
     public LevelManager(IGameObjectsFactory factory) {
-        this.currentLevel = 1;
+        this.currentLevel = 3;
         this.factory = factory;
         levels = List.of(new Level1(factory), new Level2(factory),  new Level3(factory));
     }
@@ -37,11 +37,15 @@ public class LevelManager implements ILevelManager {
     public void nextLevel() {
         this.currentLevel = (this.currentLevel % MvcGameConfig.LEVEL_COUNT) + 1;
         if(this.currentLevel == 1) {
-            this.levels.clear();
-            levels.addAll(List.of(new Level1(factory), new Level2(factory),  new Level3(factory)));
+            this.levels = List.of(new Level1(factory), new Level2(factory),  new Level3(factory));
         }
     }
 
+    @Override
+    public void addHurtEnemy(AbsEnemy enemy) {
+        levels.get(this.currentLevel - 1).addHurtEnemy(enemy);
+    }
+    
     @Override
     public void removeEnemy(AbsEnemy enemy) {
         levels.get(this.currentLevel - 1).removeEnemy(enemy);
