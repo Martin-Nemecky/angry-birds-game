@@ -24,8 +24,8 @@ public class GameObjectsRender implements IGameObjectsVisitor {
         int startX = cannon.getPosition().getX() + 40;
         int startY = cannon.getPosition().getY() + 20;
         
-        int endX = (int) Math.round(Math.cos(cannon.getAngle()) * 100) + cannon.getPosition().getX() + 40; 
-        int endY = (int) Math.round(Math.sin(cannon.getAngle()) * 100) + cannon.getPosition().getY() + 20;
+        int endX = (int) Math.round(Math.cos(cannon.getAngle()) * 100 * (cannon.getPower() / (double) MvcGameConfig.INIT_POWER)) + cannon.getPosition().getX() + 40; 
+        int endY = (int) Math.round(Math.sin(cannon.getAngle()) * 100 * (cannon.getPower() / (double) MvcGameConfig.INIT_POWER)) + cannon.getPosition().getY() + 20;
 
 
         this.gameGraphics.drawLine(new Position(startX, startY), new Position(endX, endY));

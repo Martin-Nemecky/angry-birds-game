@@ -1,7 +1,7 @@
 package cz.cvut.fit.niadp.mvcgame.model;
 
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.GameObjectsFactoryA;
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.GameObjectsFactoryA;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.SimpleMovingStrategy;
@@ -24,7 +24,8 @@ public class GameModelMockedTest {
     @Test
     public void createMissile() {
         this.generalMockSetup();
-        IGameObjectsFactory gameObjectsFactory = new GameObjectsFactoryA(this.model);
+        IGameObjectsFactory gameObjectsFactory = GameObjectsFactoryA.getInstance();
+        gameObjectsFactory.setModel(this.model);
         AbsMissile missile = gameObjectsFactory.createMissile(INIT_TEST_ANGLE, INIT_TEST_VELOCITY);
         Assert.assertEquals(CANNON_TEST_POSITION_X, missile.getPosition().getX());
         Assert.assertEquals(CANNON_TEST_POSITION_Y, missile.getPosition().getY());

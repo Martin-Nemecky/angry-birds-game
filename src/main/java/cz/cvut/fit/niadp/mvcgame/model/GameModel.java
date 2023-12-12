@@ -1,7 +1,7 @@
 package cz.cvut.fit.niadp.mvcgame.model;
 
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.GameObjectsFactoryA;
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.GameObjectsFactoryA;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.collision_detection.ICollisionDetector;
 import cz.cvut.fit.niadp.mvcgame.collision_detection.SimpleCollisionDetector;
 import cz.cvut.fit.niadp.mvcgame.command.AbstractGameCommand;
@@ -36,6 +36,7 @@ public class GameModel implements IGameModel {
     private final List<AbsCollision> collisions;
     private final AbsGameInfo gameInfo;
 
+    private ICollisionDetector collisionDetector;
     private IGameObjectsFactory gameObjectsFactory;
 
     private ILevelManager levelManager;
@@ -52,14 +53,15 @@ public class GameModel implements IGameModel {
             this.observers.put(aspectType, new HashSet<>());
         }
         
+        this.collisionDetector = SimpleCollisionDetector.getInstance();
         this.gameObjectsFactory = GameObjectsFactoryA.getInstance();
         this.gameObjectsFactory.setModel(this);
 
         this.levelManager = new LevelManager(this.gameObjectsFactory);
         
-        this.cannon = this.gameObjectsFactory.createCannon();
         this.missiles = new ArrayList<>();
         this.collisions = new ArrayList<>();
+        this.cannon = this.gameObjectsFactory.createCannon();
         this.gameInfo = this.gameObjectsFactory.createGameInfo(); 
 
         this.movingStrategy = new SimpleMovingStrategy();
@@ -70,102 +72,9 @@ public class GameModel implements IGameModel {
     public void update() {
         this.executeCommands();
         this.moveMissiles();
-        this.checkCollisions();
-    }
-
-    private void checkCollisions() {
-        this.collisions.removeAll(
-            this.collisions.stream().filter(collision -> {
-                if(collision.getAge() >= 500){
-                    this.levelManager.addHurtEnemy(this.gameObjectsFactory.createEnemy(collision.getPosition(), true));
-                    return true;
-                } 
-                return false;
-            } ).toList()
-        );
-        this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
-    }
-
-    private void executeCommands() {
-        while(!this.unexecutedCommands.isEmpty()) {
-            AbstractGameCommand command = this.unexecutedCommands.poll();
-            command.doExecute();
-            this.executedCommands.add(command);
-        }
-    }
-
-    private void moveMissiles() {
-        this.missiles.forEach(AbsMissile::move);
-
-        int prevSize = this.missiles.size();
         this.destroyMissiles();
-        int currentSize = this.missiles.size();
-
-        if (this.missiles.isEmpty() && prevSize != currentSize) {
-            this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
-        } else {
-            this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
-        }
-    }
-
-    private void destroyMissiles() {
-        this.missiles.removeAll(
-            this.missiles.stream().filter(missile -> {
-                return isOutOfScreen(missile) || hasCollided(missile);
-            } ).toList()
-        );
-    }
-
-    private boolean hasCollided(AbsMissile missile) {
-        ICollisionDetector detector = SimpleCollisionDetector.getInstance();
-        List<AbsBound> bounds = this.levelManager.getLevelBounds();
-        List<AbsEnemy> enemies = this.levelManager.getLevelEnemies();
-
-        for(AbsBound bound : bounds) {
-            if(detector.detectCollision(missile, bound)){
-                this.notifyObservers(new SimpleAspect(AspectType.MISSILE_COLLISION, missile));
-                return true;
-            }
-        }
-
-        for(AbsEnemy enemy : enemies) {
-            if(detector.detectCollision(missile, enemy)){
-                if(! enemy.isHurt()){
-                    this.levelManager.removeEnemy(enemy);
-                    this.collisions.add(this.gameObjectsFactory.createCollision(enemy.getPosition()));
-                    this.gameInfo.increaseScore(5);
-                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
-                } else {
-                    this.levelManager.removeEnemy(enemy);
-                    this.gameInfo.increaseScore(10);
-                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_DESTROYED, enemy));
-
-                    if(this.levelManager.getLevelEnemies().size() == 0 && this.collisions.size() == 0){
-                        this.levelManager.nextLevel();
-                        this.gameInfo.increaseScore(50);
-                        this.gameInfo.increaseLevel();
-                        this.notifyObservers(new SimpleAspect(AspectType.NEXT_LEVEL, enemy));
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean isOutOfScreen(AbsMissile missile) {
-        return (
-            missile.getPosition().getX() >= MvcGameConfig.MAX_X ||
-            missile.getPosition().getX() <= 0 ||
-            missile.getPosition().getY() >= MvcGameConfig.MAX_Y ||
-            missile.getPosition().getY() <= 0
-        );
-    }
-
-    public Position getCannonPosition() {
-        return this.cannon.getPosition();
+        this.removeOutdatedCollisions();
+        this.tryLevellingUp();
     }
 
     public void moveCannonUp() {
@@ -214,42 +123,6 @@ public class GameModel implements IGameModel {
         this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
     }
 
-    @Override
-    public void registerObserver(IObserver observer, AspectType aspects[]) {
-        for(AspectType aspect : aspects){
-            this.observers.get(aspect).add(observer);
-        }    
-    }
-
-    @Override
-    public void unregisterObserver(IObserver observer, AspectType aspect) {
-        this.observers.get(aspect).remove(observer);
-    }
-
-    @Override
-    public <T extends GameObject> void notifyObservers(IAspect<T> aspect) {
-        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getAspectType()));
-    }
-
-    public List<AbsMissile> getMissiles() {
-        return this.missiles;
-    }
-
-    public AbsCannon getCannon() {
-        return this.cannon;
-    }
-
-    public List<GameObject> getGameObjects() {
-        List<GameObject> temp1 = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
-        List<GameObject> temp2 = Stream.concat(Stream.of(this.gameInfo), temp1.stream()).toList();
-        List<GameObject> temp3 = Stream.concat(this.collisions.stream(), temp2.stream()).toList();
-        return Stream.concat(temp3.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
-    }
-
-    public IMovingStrategy getMovingStrategy() {
-        return this.movingStrategy;
-    }
-
     public void toggleMovingStrategy() {
         if (this.movingStrategy instanceof SimpleMovingStrategy) {
             this.movingStrategy = new RealisticMovingStrategy();
@@ -268,6 +141,67 @@ public class GameModel implements IGameModel {
         this.cannon.toggleShootingMode();
         this.notifyObservers(new SimpleAspect(AspectType.CANNON_MOVED, this.cannon));
     }
+
+    // ================================== Getters & Setters ==================================
+
+    public Position getCannonPosition() {
+        return this.cannon.getPosition();
+    }
+
+    public AbsCannon getCannon() {
+        return this.cannon;
+    }
+
+    public List<AbsMissile> getMissiles() {
+        return this.missiles;
+    }
+
+    public IMovingStrategy getMovingStrategy() {
+        return this.movingStrategy;
+    }
+
+    public List<GameObject> getGameObjects() {
+        List<GameObject> temp1 = Stream.concat(Stream.of(this.cannon), this.missiles.stream()).toList();
+        List<GameObject> temp2 = Stream.concat(Stream.of(this.gameInfo), temp1.stream()).toList();
+        List<GameObject> temp3 = Stream.concat(this.collisions.stream(), temp2.stream()).toList();
+        return Stream.concat(temp3.stream(), this.levelManager.getLevelGameObjects().stream()).toList();
+    }
+
+    // ================================== Observers ==================================
+
+    @Override
+    public void registerObserver(IObserver observer, AspectType aspects[]) {
+        for(AspectType aspect : aspects){
+            this.observers.get(aspect).add(observer);
+        }    
+    }
+
+    @Override
+    public void unregisterObserver(IObserver observer, AspectType aspect) {
+        this.observers.get(aspect).remove(observer);
+    }
+
+    @Override
+    public <T extends GameObject> void notifyObservers(IAspect<T> aspect) {
+        this.observers.get(aspect.getAspectType()).forEach(observer -> observer.update(aspect.getAspectType()));
+    }
+
+    // ================================== Commands ==================================
+
+    @Override
+    public void registerCommand(AbstractGameCommand command) {
+        this.unexecutedCommands.add(command);
+    }
+
+    @Override
+    public void undoLastCommand() {
+        if (!this.executedCommands.isEmpty()) {
+            this.executedCommands.pop().unExecute();
+            this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
+        }
+    }
+
+    // ================================== Memento ==================================
 
     private static class Memento {
         private int cannonPositionX;
@@ -298,16 +232,95 @@ public class GameModel implements IGameModel {
         this.gameInfo.setLevel(gameModelSnapshot.currentLevel);
     }
 
-    @Override
-    public void registerCommand(AbstractGameCommand command) {
-        this.unexecutedCommands.add(command);
+    // ================================== PRIVATE METHODS ==================================
+
+    private void moveMissiles() {
+        this.missiles.forEach(AbsMissile::move);
     }
 
-    @Override
-    public void undoLastCommand() {
-        if (!this.executedCommands.isEmpty()) {
-            this.executedCommands.pop().unExecute();
+    private void destroyMissiles() {
+        int prevSize = this.missiles.size();
+        this.missiles.removeAll(
+            this.missiles.stream().filter(missile -> {
+                return isOutOfScreen(missile) || hasCollided(missile);
+            } ).toList()
+        );
+        int currentSize = this.missiles.size();
+
+        if (this.missiles.isEmpty() && prevSize != currentSize) {
             this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
+        } else {
+            this.missiles.forEach(missile -> this.notifyObservers(new SimpleAspect(AspectType.MISSILE_MOVED, missile)));
+        }
+    }
+
+    private void removeOutdatedCollisions() {
+        this.collisions.removeAll(
+            this.collisions.stream().filter(collision -> {
+                if(collision.getAge() >= 500){
+                    this.levelManager.addHurtEnemy(this.gameObjectsFactory.createEnemy(collision.getPosition(), true));
+                    return true;
+                } 
+                return false;
+            } ).toList()
+        );
+        this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
+    }
+
+    private void tryLevellingUp() {
+        if(this.levelManager.getLevelEnemies().size() == 0 && this.collisions.size() == 0){
+            this.levelManager.nextLevel();
+            this.gameInfo.increaseScore(50);
+            this.gameInfo.increaseLevel();
+            this.notifyObservers(new SimpleAspect(AspectType.NEXT_LEVEL));
+        }
+    }
+
+    private boolean hasCollided(AbsMissile missile) {
+        List<AbsBound> bounds = this.levelManager.getLevelBounds();
+        List<AbsEnemy> enemies = this.levelManager.getLevelEnemies();
+
+        for(AbsBound bound : bounds) {
+            if(collisionDetector.detectCollision(missile, bound)){
+                this.notifyObservers(new SimpleAspect(AspectType.MISSILE_COLLISION, missile));
+                return true;
+            }
+        }
+
+        for(AbsEnemy enemy : enemies) {
+            if(collisionDetector.detectCollision(missile, enemy)){
+                if(! enemy.isHurt()){
+                    this.levelManager.removeEnemy(enemy);
+                    this.collisions.add(this.gameObjectsFactory.createCollision(enemy.getPosition()));
+                    this.gameInfo.increaseScore(5);
+                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_ATTACKED, enemy));
+                } else {
+                    this.levelManager.removeEnemy(enemy);
+                    this.gameInfo.increaseScore(10);
+                    this.notifyObservers(new SimpleAspect(AspectType.ENEMY_DESTROYED, enemy));
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isOutOfScreen(AbsMissile missile) {
+        return (
+            missile.getPosition().getX() >= MvcGameConfig.MAX_X ||
+            missile.getPosition().getX() <= 0 ||
+            missile.getPosition().getY() >= MvcGameConfig.MAX_Y ||
+            missile.getPosition().getY() <= 0
+        );
+    }
+
+    private void executeCommands() {
+        while(!this.unexecutedCommands.isEmpty()) {
+            AbstractGameCommand command = this.unexecutedCommands.poll();
+            command.doExecute();
+            this.executedCommands.add(command);
         }
     }
 }

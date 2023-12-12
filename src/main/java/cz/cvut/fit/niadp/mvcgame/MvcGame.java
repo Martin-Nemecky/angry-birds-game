@@ -24,8 +24,9 @@ public class MvcGame {
         this.model = new GameModelProxy(new GameModel());
         this.view = new GameView(model);
         this.soundObserver = new SoundObserver(model);
-        soundObserver.init();
+        this.soundObserver.init();
         this.controller = this.view.getController();
+        this.controller.init();
 
         CareTaker.getInstance().setModel(this.model);
     }

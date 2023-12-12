@@ -3,7 +3,7 @@ package cz.cvut.fit.niadp.mvcgame.model.levels.manager;
 import java.util.List;
 import java.util.stream.Stream;
 
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.GameObject;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;

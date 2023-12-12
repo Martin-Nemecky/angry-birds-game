@@ -48,6 +48,10 @@ public abstract class AbsCannon extends GameObject {
         return this.angle;
     }
 
+    public int getPower() {
+        return this.power;
+    }
+
     @Override
     public abstract AbsCannon clone();
 }

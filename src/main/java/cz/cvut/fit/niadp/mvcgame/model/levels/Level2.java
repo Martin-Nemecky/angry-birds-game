@@ -2,7 +2,7 @@ package cz.cvut.fit.niadp.mvcgame.model.levels;
 
 import java.util.List;
 
-import cz.cvut.fit.niadp.mvcgame.abstractfactory.IGameObjectsFactory;
+import cz.cvut.fit.niadp.mvcgame.abstract_factory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.model.Position;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;

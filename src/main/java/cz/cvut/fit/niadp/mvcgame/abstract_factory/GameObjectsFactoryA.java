@@ -1,4 +1,4 @@
-package cz.cvut.fit.niadp.mvcgame.abstractfactory;
+package cz.cvut.fit.niadp.mvcgame.abstract_factory;
 
 import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.IGameModel;
