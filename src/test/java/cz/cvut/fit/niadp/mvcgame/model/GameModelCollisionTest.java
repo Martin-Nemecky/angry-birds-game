@@ -3,13 +3,10 @@ package cz.cvut.fit.niadp.mvcgame.model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import cz.cvut.fit.niadp.mvcgame.abstract_factory.GameObjectsFactoryA;
-import cz.cvut.fit.niadp.mvcgame.abstract_factory.IGameObjectsFactory;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.BoundA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.enemies.AbsEnemy;
