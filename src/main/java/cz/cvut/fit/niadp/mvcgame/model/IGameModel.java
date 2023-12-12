@@ -20,6 +20,7 @@ public interface IGameModel extends IObservable {
     void cannonPowerUp();
     void cannonPowerDown();
     void cannonShoot();
+    void fireBomb();
     List<AbsMissile> getMissiles();
     List<GameObject> getGameObjects();
     IMovingStrategy getMovingStrategy();

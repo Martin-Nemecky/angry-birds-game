@@ -139,4 +139,9 @@ public class GameModelProxy implements IGameModel {
     public void undoLastCommand() {
         this.subject.undoLastCommand();
     }
+
+    @Override
+    public void fireBomb() {
+        this.subject.fireBomb();
+    }
 }

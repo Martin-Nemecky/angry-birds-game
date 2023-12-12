@@ -19,6 +19,7 @@ import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.IAspect;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.SimpleAspect;
+import cz.cvut.fit.niadp.mvcgame.strategy.FallingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.SimpleMovingStrategy;
@@ -90,7 +91,23 @@ public class GameModel implements IGameModel {
     public void cannonShoot() {
         List<AbsMissile> missiles = this.cannon.shoot();
         this.missiles.addAll(missiles);
-        this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED, missiles.get(0)));
+        this.notifyObservers(new SimpleAspect(AspectType.MISSILE_FIRED));
+    }
+
+    public void fireBomb() {
+        List<AbsMissile> missiles = new ArrayList<>();
+        int spacing = (MvcGameConfig.MAX_X - 500) / MvcGameConfig.BOMB_BATCH_SIZE;
+        for(int i = 0; i < MvcGameConfig.BOMB_BATCH_SIZE; i++){
+            missiles.add(this.gameObjectsFactory.createMissile(
+                new Position(250 + spacing * i, 30),
+                MvcGameConfig.INIT_ANGLE,
+                MvcGameConfig.INIT_POWER,
+                new FallingStrategy()
+            ));
+        }
+
+        this.missiles.addAll(missiles);
+        this.notifyObservers(new SimpleAspect(AspectType.DEFAULT));
     }
 
     public void aimCannonUp() {

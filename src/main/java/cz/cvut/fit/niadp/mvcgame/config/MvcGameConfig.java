@@ -23,8 +23,9 @@ public class MvcGameConfig {
     public static final int MIN_BATCH_SIZE = 1;
     public static final int MAX_ENEMIES_COUNT = 8;
 
-    public static final int GAME_OBJECT_SIZE = 30;
+    public static final int GAME_OBJECT_SIZE = 25;
     public static final int LEVEL_COUNT = 3;
+    public static final int BOMB_BATCH_SIZE = 15;
 
     public static final String GAME_TITLE = "The NI-ADP MvcGame";
 
@@ -41,6 +42,7 @@ public class MvcGameConfig {
     public static final String UNDO_LAST_COMMAND_KEY = "B";
     public static final String INCREASE_BATCH_KEY = "I";
     public static final String DECREASE_BATCH_KEY = "U";
+    public static final String BOMB_KEY = "H";
 
     public static final String CANNON_IMAGE_RESOURCE = "/images/cannon.png";
     public static final String MISSILE_IMAGE_RESOURCE = "/images/missile.png";

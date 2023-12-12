@@ -2,6 +2,7 @@ package cz.cvut.fit.niadp.mvcgame.controller;
 
 import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.AimDownKeyHandler;
 import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.AimUpKeyHandler;
+import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.BombKeyHandler;
 import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.DecreaseBatchKeyHandler;
 import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.DownKeyHandler;
 import cz.cvut.fit.niadp.mvcgame.chain_of_responsibility.ExitKeyHandler;
@@ -41,8 +42,9 @@ public class GameController {
         IHandler handler9 = new ShootingModeKeyHandler(model);
         IHandler handler10 = new IncreaseBatchKeyHandler(model);
         IHandler handler11 = new DecreaseBatchKeyHandler(model);
-        IHandler handler12 = new UndoLastCommandKeyHandler(model);
-        IHandler handler13 = new ExitKeyHandler(model);
+        IHandler handler12 = new BombKeyHandler(model);
+        IHandler handler13 = new UndoLastCommandKeyHandler(model);
+        IHandler handler14 = new ExitKeyHandler(model);
 
         initHandler.setNextHandler(handler2);
         handler2.setNextHandler(handler3);
@@ -56,6 +58,7 @@ public class GameController {
         handler10.setNextHandler(handler11);
         handler11.setNextHandler(handler12);
         handler12.setNextHandler(handler13);
+        handler13.setNextHandler(handler14);
     }
 
     public void processPressedKeys(List<String> pressedKeysCodes) {
