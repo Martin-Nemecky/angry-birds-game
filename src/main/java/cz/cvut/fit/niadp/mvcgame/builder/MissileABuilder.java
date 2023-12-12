@@ -12,13 +12,13 @@ public class MissileABuilder extends AbsMissileBuilder<MissileA> {
     }
 
     @Override
-    public AbsMissileBuilder<MissileA> withPosition(Position position) {
+    public MissileABuilder withPosition(Position position) {
         missile.setPosition(position);
         return this;
     }
 
     @Override
-    public AbsMissileBuilder<MissileA> withVelocity(int velocity) {
+    public MissileABuilder withVelocity(int velocity) {
         missile.setInitVelocity(velocity);
         return this;
     }

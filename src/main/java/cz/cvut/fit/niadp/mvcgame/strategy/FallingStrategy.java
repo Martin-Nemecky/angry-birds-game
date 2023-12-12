@@ -9,7 +9,7 @@ public class FallingStrategy implements IMovingStrategy {
     @Override
     public void updatePosition(AbsMissile missile) {
         int initVelocity = MvcGameConfig.INIT_POWER;
-        long time = missile.getAge() / 100;
+        long time = (long) (missile.getAge() / 500.0);
         int dY = (int) (initVelocity * time);
 
         missile.move(new Vector(0, dY));
