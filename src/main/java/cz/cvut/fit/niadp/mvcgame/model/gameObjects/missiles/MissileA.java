@@ -5,7 +5,7 @@ import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 
 public class MissileA extends AbsMissile {
 
-    private final IMovingStrategy movingStrategy;
+    private IMovingStrategy movingStrategy;
 
     public MissileA(Position initPosition, double initAngle, int initVelocity, IMovingStrategy movingStrategy) {
         super(initPosition, initAngle, initVelocity);
@@ -15,6 +15,10 @@ public class MissileA extends AbsMissile {
     @Override
     public void move() {
         this.movingStrategy.updatePosition(this);
+    }
+
+    public void setMovingStrategy(IMovingStrategy strategy) {
+        this.movingStrategy = strategy;
     }
 
     @Override
