@@ -19,7 +19,7 @@ import cz.cvut.fit.niadp.mvcgame.observer.IObserver;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.AspectType;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.IAspect;
 import cz.cvut.fit.niadp.mvcgame.observer.aspects.specific.SimpleAspect;
-import cz.cvut.fit.niadp.mvcgame.strategy.FallingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.FallingMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.IMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.RealisticMovingStrategy;
 import cz.cvut.fit.niadp.mvcgame.strategy.SimpleMovingStrategy;
@@ -102,7 +102,7 @@ public class GameModel implements IGameModel {
                 new Position(250 + spacing * i, 30),
                 MvcGameConfig.INIT_ANGLE,
                 MvcGameConfig.INIT_POWER,
-                new FallingStrategy()
+                new FallingMovingStrategy()
             ));
         }
 

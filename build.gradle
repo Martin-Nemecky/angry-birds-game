@@ -10,10 +10,10 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'org.jmockit:jmockit:1.49'
     implementation 'junit:junit:4.13.2'
     implementation 'org.openjfx:javafx-controls:20'
     implementation 'org.openjfx:javafx-media:20'
-    testImplementation 'org.jmockit:jmockit:1.49'
 }
 
 application {

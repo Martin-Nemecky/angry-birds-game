@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 public class GameModelReflectionTest {
 
-    private static final String MOVE_MISSILES_METHOD_NAME = "moveMissiles";
+    private static final String MOVE_MISSILES_METHOD_NAME = "update";
     private static final int ITERATION_START_CONST = 1;
     private static final int MISSILE_COUNT = 50;
     private static final int MOVE_COUNT = 100000;

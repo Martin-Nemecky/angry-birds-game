@@ -4,7 +4,7 @@ import cz.cvut.fit.niadp.mvcgame.config.MvcGameConfig;
 import cz.cvut.fit.niadp.mvcgame.model.Vector;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 
-public class FallingStrategy implements IMovingStrategy {
+public class FallingMovingStrategy implements IMovingStrategy {
 
     @Override
     public void updatePosition(AbsMissile missile) {

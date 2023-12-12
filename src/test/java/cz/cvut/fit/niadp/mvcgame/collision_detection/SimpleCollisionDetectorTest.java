@@ -9,7 +9,7 @@ import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.AbsBound;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.bounds.BoundA;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.AbsMissile;
 import cz.cvut.fit.niadp.mvcgame.model.gameObjects.missiles.MissileA;
-import cz.cvut.fit.niadp.mvcgame.strategy.FallingStrategy;
+import cz.cvut.fit.niadp.mvcgame.strategy.FallingMovingStrategy;
 
 public class SimpleCollisionDetectorTest {
     
@@ -20,7 +20,7 @@ public class SimpleCollisionDetectorTest {
         Position missilePos = new Position(200, 100);
         Position boundPos = new Position(200, 100);
 
-        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingStrategy());
+        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingMovingStrategy());
         AbsBound bound = new BoundA(boundPos);
         
         boolean result = detector.detectCollision(missile, bound);
@@ -36,7 +36,7 @@ public class SimpleCollisionDetectorTest {
         Position missilePos = new Position(200 + MvcGameConfig.GAME_OBJECT_SIZE, 100);
         Position boundPos = new Position(200, 100);
 
-        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingStrategy());
+        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingMovingStrategy());
         AbsBound bound = new BoundA(boundPos);
         
         boolean result = detector.detectCollision(missile, bound);
@@ -52,7 +52,7 @@ public class SimpleCollisionDetectorTest {
         Position missilePos = new Position(200, 100 - MvcGameConfig.GAME_OBJECT_SIZE);
         Position boundPos = new Position(200, 100);
 
-        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingStrategy());
+        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingMovingStrategy());
         AbsBound bound = new BoundA(boundPos);
         
         boolean result = detector.detectCollision(missile, bound);
@@ -68,7 +68,7 @@ public class SimpleCollisionDetectorTest {
         Position missilePos = new Position(200 + MvcGameConfig.GAME_OBJECT_SIZE + 1, 100);
         Position boundPos = new Position(200, 100);
 
-        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingStrategy());
+        AbsMissile missile = new MissileA(missilePos,0, 10, new FallingMovingStrategy());
         AbsBound bound = new BoundA(boundPos);
         
         boolean result = detector.detectCollision(missile, bound);
