@@ -1,9 +1,10 @@
-# mvcgame-ni-adp-2023
+# Angry Birds Game Clone
 
+## Getting Started
+```
+./gradlew run
+```
 
+## Illustrations
 
-## Run App
-
-*./gradlew run*
-
-
+![Game Illustration](illustrations/angry-birds.png)
